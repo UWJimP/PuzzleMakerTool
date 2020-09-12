@@ -12,7 +12,7 @@ public class DragDrop : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start() {
-        resetPos = transform.localPosition;
+        //resetPos = transform.localPosition;
     }
 
     // Update is called once per frame

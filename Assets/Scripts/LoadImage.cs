@@ -11,7 +11,8 @@ public class LoadImage : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start() {
-        StartCoroutine(GetTexture2());
+        string url = "https://uwjimp.github.io/Jim-Portfolio-Website/assets/img/img_021.jpg";
+        StartCoroutine(GetTexture(url));
     }
 
     IEnumerator GetTexture() {
@@ -46,18 +47,21 @@ public class LoadImage : MonoBehaviour {
         }
     }
 
-    IEnumerator GetTexture2() {
-        string url = "https://uwjimp.github.io/Jim-Portfolio-Website/assets/img/img_021.jpg";
+    IEnumerator GetTexture(string url) {
         UnityWebRequest www = UnityWebRequest.Get(url);
         DownloadHandler handle = www.downloadHandler;
+        Debug.Log("Is Loading..."); //Before the image is loaded.
         yield return www.SendWebRequest();
 
         if (www.isNetworkError || www.isHttpError) {
             Debug.Log(www.error);
         } else {
-            Texture2D texture2d = new Texture2D(0, 0);
+            Texture2D texture2d = new Texture2D(0, 0); //Build an empty texture to be loaded in later.
             if (texture2d.LoadImage(handle.data)) {
+                Debug.Log("Loaded"); //After the image is loaded.
                 Sprite sprite = null;
+
+                //Load pieces
                 GameObject[,] pieces = breaker.createdPieces;
                 float pixelsPerWidth = texture2d.width / breaker.GetWidth();
                 float pixelsPerHeight = texture2d.height / breaker.GetHeight();
@@ -78,8 +82,10 @@ public class LoadImage : MonoBehaviour {
                             if (collider.size.y * 100f < sprite.rect.height) {
                                 yScale = (collider.size.y * 100f) / sprite.rect.height;
                             }
-                            pieces[x, y].GetComponent<PuzzlePiece>().SetImageScale(new Vector3(xScale, yScale));
-                            //pieces[x, y].GetComponent<PuzzlePiece>().SetImagePosition(new Vector2(collider.size.x / -2f, collider.size.y / -2f));
+                            PuzzlePiece piece = pieces[x, y].GetComponent<PuzzlePiece>();
+                            piece.SetImagePosition(new Vector2(collider.size.x / -2f, collider.size.y / -2f));
+                            piece.SetImageScale(new Vector3(xScale, yScale));
+                            piece.SetCorrectPosition(x, y);
                         }
                     }
                 }
