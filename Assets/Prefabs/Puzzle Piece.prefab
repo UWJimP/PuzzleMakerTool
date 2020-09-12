@@ -72,6 +72,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 4640126334069325147}
+  correctX: 0
+  correctY: 0
 --- !u!1 &4640126334069325147
 GameObject:
   m_ObjectHideFlags: 0

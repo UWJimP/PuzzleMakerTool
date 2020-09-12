@@ -4,21 +4,39 @@ using UnityEngine.Networking;
 
 public class SwapDropCreator : MonoBehaviour {
 
+    /// <summary>
+    /// The number of puzzle pieces along the width.
+    /// </summary>
     [SerializeField]
     private int width_pieces;
 
+    /// <summary>
+    /// The number of puzzle pieces along the height.
+    /// </summary>
     [SerializeField]
     private int height_pieces;
 
+    /// <summary>
+    /// The puzzle board's boundary box.
+    /// </summary>
     [SerializeField]
     private BoxCollider2D puzzleBoard;
 
+    /// <summary>
+    /// The prefab of the puzzle piece.
+    /// </summary>
     [SerializeField]
     private PuzzlePiece puzzlePiece;
 
+    /// <summary>
+    /// The prefab of the puzzle slot.
+    /// </summary>
     [SerializeField]
     private PuzzleSlot puzzleSlot;
 
+    /// <summary>
+    /// A 2d array of the created puzzle pieces.
+    /// </summary>
     private GameObject[,] createdPieces;
 
     // Start is called before the first frame update
@@ -34,11 +52,14 @@ public class SwapDropCreator : MonoBehaviour {
             createdPieces = new GameObject[width_pieces, height_pieces];
             transform.position = new Vector3(puzzleBoard.transform.position.x, puzzleBoard.transform.position.y, 0f);
             string url = "https://uwjimp.github.io/Jim-Portfolio-Website/assets/img/img_021.jpg";
-            StartCoroutine(LoadImage(url));
             GeneratePieces();
+            StartCoroutine(LoadImage(url));
         }
     }
 
+    /// <summary>
+    /// Generates the puzzle pieces and their collider.
+    /// </summary>
     private void GeneratePieces() {
         //Calculates the pixels per width and height for each piece.
         float width = puzzleBoard.size.x / width_pieces;
@@ -56,20 +77,27 @@ public class SwapDropCreator : MonoBehaviour {
                 GameObject piece = Instantiate(puzzlePiece.gameObject);
                 GameObject slot = Instantiate(puzzleSlot.gameObject);
 
-                piece.transform.parent = transform; //Stores the generated puzzle piece into this transform.
+                //piece.transform.parent = transform; //Stores the generated puzzle piece into this transform.
                 piece.transform.position = new Vector3(startX + width * (x + 0.5f), startY + height * (y + 0.5f));
                 piece.GetComponent<BoxCollider2D>().size = new Vector2(width, height); //Set size of the puzzle piece's box.
                 createdPieces[x, y] = piece; //Store the piece into the array.
                 slot.GetComponent<PuzzleSlot>().SetBound(new Vector2(width, height)); //Sets the slot's slot size.
-                slot.GetComponent<PuzzleSlot>().SetPosition(piece.transform.position); //Sets the position of the slot.
+                slot.GetComponent<PuzzleSlot>().SetPosition(new Vector3(piece.transform.position.x,
+                    piece.transform.position.y, 1f)); //Sets the position of the slot.
                 slot.transform.parent = slotContainer.transform;
                 slot.GetComponent<PuzzleSlot>().SetSlotPosition(x, y);
             }
         }
 
+        puzzleBoard.transform.position = new Vector3(-1000f, -1000f, -1000f);
         puzzleBoard.enabled = false;
     }
 
+    /// <summary>
+    /// Load the image from an internet source.
+    /// </summary>
+    /// <param name="url">The url of the source.</param>
+    /// <returns>The IEnumerator used by the coroutine.</returns>
     private IEnumerator LoadImage(string url) {
         UnityWebRequest www = UnityWebRequest.Get(url);
         DownloadHandler handle = www.downloadHandler;
@@ -88,6 +116,7 @@ public class SwapDropCreator : MonoBehaviour {
                 GameObject[,] pieces = createdPieces;
                 float pixelsPerWidth = texture2d.width / width_pieces;
                 float pixelsPerHeight = texture2d.height / height_pieces;
+                //Go through each piece in the array and assign the image to it.
                 for (int x = 0; x < width_pieces; x++) {
                     for (int y = 0; y < height_pieces; y++) {
                         BoxCollider2D collider = pieces[x, y].GetComponent<BoxCollider2D>();

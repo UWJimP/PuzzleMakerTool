@@ -3,6 +3,7 @@
 public class DragDrop : MonoBehaviour {
 
     public GameObject correctForm;
+    [SerializeField]
     private bool moving;
 
     private float startPosX;
@@ -36,17 +37,19 @@ public class DragDrop : MonoBehaviour {
             startPosY = mousePos.y - this.transform.localPosition.y;
 
             moving = true;
+            //PuzzlePiece piece = gameObject.GetComponent<PuzzlePiece>();
+            //Debug.Log("Mouse down on X: " + piece.GetCorrectX() + " Y: " + piece.GetCorrectY());
         }
     }
 
     private void OnMouseUp() {
         moving = false;
 
-        if(Mathf.Abs(transform.localPosition.x - correctForm.transform.localPosition.x) <= 0.5f &&
-            Mathf.Abs(transform.localPosition.y - correctForm.transform.localPosition.y) <= 0.5f) {
-            transform.localPosition = new Vector3(correctForm.transform.localPosition.x, correctForm.transform.localPosition.y, 0f);
-        } else {
+        //if(Mathf.Abs(transform.localPosition.x - correctForm.transform.localPosition.x) <= 0.5f &&
+        //    Mathf.Abs(transform.localPosition.y - correctForm.transform.localPosition.y) <= 0.5f) {
+        //    transform.localPosition = new Vector3(correctForm.transform.localPosition.x, correctForm.transform.localPosition.y, 0f);
+        //} else {
             //transform.localPosition = new Vector3(resetPos.x, resetPos.y, 0f);
-        }
+        //}
     }
 }

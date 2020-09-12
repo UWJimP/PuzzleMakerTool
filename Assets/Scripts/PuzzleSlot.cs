@@ -37,9 +37,9 @@ public class PuzzleSlot : MonoBehaviour {
     /// <summary>
     /// Set the transform position of the game object.
     /// </summary>
-    /// <param name="vector2"></param>
-    public void SetPosition(Vector2 vector2) {
-        transform.position = vector2;
+    /// <param name="vector3">The vector 3 position.</param>
+    public void SetPosition(Vector3 vector3) {
+        transform.position = vector3;
     }
 
     /// <summary>
