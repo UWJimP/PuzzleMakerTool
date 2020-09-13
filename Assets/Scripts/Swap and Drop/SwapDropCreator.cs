@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -39,8 +40,16 @@ public class SwapDropCreator : MonoBehaviour {
     /// </summary>
     private GameObject[,] createdPieces;
 
+    /// <summary>
+    /// A list of the created puzzle pieces.
+    /// </summary>
+    private List<GameObject> puzzlePiecesList;
+
+    public BoxCollider2D piecesContainer;
+
     // Start is called before the first frame update
     void Start() {
+        puzzlePiecesList = new List<GameObject>();
         if (puzzlePiece == null || width_pieces <= 0 || height_pieces <= 0 || puzzleBoard == null || puzzleSlot == null) {
             puzzlePiece = null;
             width_pieces = 1;
@@ -54,6 +63,7 @@ public class SwapDropCreator : MonoBehaviour {
             string url = "https://uwjimp.github.io/Jim-Portfolio-Website/assets/img/img_021.jpg";
             GeneratePieces();
             StartCoroutine(LoadImage(url));
+            MovePiecesToContainer();
         }
     }
 
@@ -88,9 +98,11 @@ public class SwapDropCreator : MonoBehaviour {
                     piece.transform.position.y, 1f)); //Sets the position of the slot.
                 slot.transform.parent = slotContainer.transform;
                 slot.GetComponent<PuzzleSlot>().SetSlotPosition(x, y);
+                //slot.GetComponent<UnityEngine.UI.Outline>().enabled = true;
+                puzzlePiecesList.Add(piece);
             }
         }
-
+        
         //puzzleBoard.transform.position = new Vector3(-1000f, -1000f, -1000f);
         puzzleBoard.enabled = false;
     }
@@ -147,4 +159,16 @@ public class SwapDropCreator : MonoBehaviour {
         }
     }
 
+    private void MovePiecesToContainer() {
+        float box_start_x = piecesContainer.transform.position.x - (piecesContainer.size.x / 2);
+        float box_end_x = piecesContainer.transform.position.x + (piecesContainer.size.x / 2);
+        float box_start_y = piecesContainer.transform.position.y - (piecesContainer.size.y / 2);
+        float box_end_y = piecesContainer.transform.position.y + (piecesContainer.size.y / 2);
+        foreach (GameObject piece in puzzlePiecesList) {
+            float x = Random.Range(box_start_x, box_end_x);
+            float y = Random.Range(box_start_y, box_end_y);
+            piece.transform.position = new Vector3(x, y, 0f);
+        }
+        piecesContainer.enabled = false;
+    }
 }

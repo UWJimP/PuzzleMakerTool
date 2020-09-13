@@ -37,6 +37,10 @@ public class PuzzlePiece : MonoBehaviour {
         }
     }
 
+    public bool IsMoving() {
+        return moving;
+    }
+
     private void OnMouseDown() {
         if (Input.GetMouseButtonDown(0)) {
             Vector3 mousePos;

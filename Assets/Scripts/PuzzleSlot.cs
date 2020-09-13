@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PuzzleSlot : MonoBehaviour {
 
@@ -64,4 +65,17 @@ public class PuzzleSlot : MonoBehaviour {
         }
         return false;
     }
+
+    private void OnTriggerStay2D(Collider2D collision) {
+        if(collision.gameObject.CompareTag("Puzzle Piece")) {
+            PuzzlePiece piece = collision.gameObject.GetComponent<PuzzlePiece>();
+            //Debug.Log(piece);
+            if (Mathf.Abs(collision.transform.localPosition.x - transform.localPosition.x) <= 0.8f &&
+                Mathf.Abs(collision.transform.localPosition.y - transform.localPosition.y) <= 0.8f && !piece.IsMoving()) {
+                //Debug.Log("Triggered");
+                collision.gameObject.transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, 0f);
+            }
+        }
+    }
+
 }
