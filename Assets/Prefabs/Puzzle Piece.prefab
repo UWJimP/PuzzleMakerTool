@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4560619710845411152}
   m_Layer: 0
   m_Name: Puzzle Piece
-  m_TagString: Untagged
+  m_TagString: Puzzle Piece
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

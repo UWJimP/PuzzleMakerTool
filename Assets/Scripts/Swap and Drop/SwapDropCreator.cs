@@ -70,6 +70,8 @@ public class SwapDropCreator : MonoBehaviour {
         //The container used to store the pieces in for the future.
         GameObject slotContainer = new GameObject("Slot Container");
         slotContainer.transform.position = new Vector3(0f, 0f, 0f);
+        GameObject piecesContainer = new GameObject("Pieces Container");
+        piecesContainer.transform.position = new Vector3(0f, 0f, 0f);
 
         //Generates an array of box collider pieces beforehand along with the puzzle slots to store them.
         for (int x = 0; x < width_pieces; x++) {
@@ -77,7 +79,7 @@ public class SwapDropCreator : MonoBehaviour {
                 GameObject piece = Instantiate(puzzlePiece.gameObject);
                 GameObject slot = Instantiate(puzzleSlot.gameObject);
 
-                //piece.transform.parent = transform; //Stores the generated puzzle piece into this transform.
+                piece.transform.parent = piecesContainer.transform; //Stores the generated puzzle piece into this transform.
                 piece.transform.position = new Vector3(startX + width * (x + 0.5f), startY + height * (y + 0.5f));
                 piece.GetComponent<BoxCollider2D>().size = new Vector2(width, height); //Set size of the puzzle piece's box.
                 createdPieces[x, y] = piece; //Store the piece into the array.
@@ -89,7 +91,7 @@ public class SwapDropCreator : MonoBehaviour {
             }
         }
 
-        puzzleBoard.transform.position = new Vector3(-1000f, -1000f, -1000f);
+        //puzzleBoard.transform.position = new Vector3(-1000f, -1000f, -1000f);
         puzzleBoard.enabled = false;
     }
 
