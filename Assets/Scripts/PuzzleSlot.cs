@@ -70,8 +70,8 @@ public class PuzzleSlot : MonoBehaviour {
         if(collision.gameObject.CompareTag("Puzzle Piece")) {
             PuzzlePiece piece = collision.gameObject.GetComponent<PuzzlePiece>();
             //Debug.Log(piece);
-            if (Mathf.Abs(collision.transform.localPosition.x - transform.localPosition.x) <= 0.8f &&
-                Mathf.Abs(collision.transform.localPosition.y - transform.localPosition.y) <= 0.8f && !piece.IsMoving()) {
+            if (Mathf.Abs(collision.transform.localPosition.x - transform.localPosition.x) <= 1f &&
+                Mathf.Abs(collision.transform.localPosition.y - transform.localPosition.y) <= 1f && !piece.IsMoving()) {
                 //Debug.Log("Triggered");
                 collision.gameObject.transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, 0f);
             }

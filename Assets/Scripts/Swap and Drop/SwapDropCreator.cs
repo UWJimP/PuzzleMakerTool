@@ -45,25 +45,43 @@ public class SwapDropCreator : MonoBehaviour {
     /// </summary>
     private List<GameObject> puzzlePiecesList;
 
+    private Texture2D image;
+
+    private string errorMessage;
+
+    private SwapDropData dropData;
+
     public BoxCollider2D piecesContainer;
 
     // Start is called before the first frame update
     void Start() {
         puzzlePiecesList = new List<GameObject>();
-        if (puzzlePiece == null || width_pieces <= 0 || height_pieces <= 0 || puzzleBoard == null || puzzleSlot == null) {
+        GameObject dataObject = GameObject.Find("Data Manager");
+        dropData = dataObject.GetComponent<SwapDropData>();
+
+        if (puzzlePiece == null || puzzleBoard == null || puzzleSlot == null) {
             puzzlePiece = null;
-            width_pieces = 1;
-            height_pieces = 1;
             puzzleBoard = null;
             puzzleSlot = null;
         }
+
+        width_pieces = dropData.GetWidth();
+        height_pieces = dropData.GetHeight();
+        string url = dropData.GetURL();
+
+        image = new Texture2D(0, 0);
+        errorMessage = null;
         if (width_pieces > 0 && height_pieces > 0 && puzzlePiece != null && puzzleBoard != null && puzzleSlot != null) {
             createdPieces = new GameObject[width_pieces, height_pieces];
             transform.position = new Vector3(puzzleBoard.transform.position.x, puzzleBoard.transform.position.y, 0f);
-            string url = "https://uwjimp.github.io/Jim-Portfolio-Website/assets/img/img_021.jpg";
+            //string url = "https://uwjimp.github.io/Jim-Portfolio-Website/assets/img/img_021.jpg";
+            //string url = "https://uwjimp.github.io/Jim-Portfolio-Website/index.html";
             GeneratePieces();
             StartCoroutine(LoadImage(url));
-            MovePiecesToContainer();
+            if(errorMessage == null) {
+                
+                MovePiecesToContainer();
+            }
         }
     }
 
@@ -120,40 +138,50 @@ public class SwapDropCreator : MonoBehaviour {
 
         if (www.isNetworkError || www.isHttpError) {
             Debug.Log(www.error);
+            errorMessage = www.error;
         } else {
-            Texture2D texture2d = new Texture2D(0, 0); //Build an empty texture to be loaded in later.
-            if (texture2d.LoadImage(handle.data)) {
+            //Texture2D texture2d = new Texture2D(0, 0); //Build an empty texture to be loaded in later.
+            if (image.LoadImage(handle.data)) {
                 Debug.Log("Loaded"); //After the image is loaded.
-                Sprite sprite = null;
+                CropImage();
+            } else {
+                errorMessage = "Error with image.";
+            }
+        }
+    }
 
-                //Load pieces
-                GameObject[,] pieces = createdPieces;
-                float pixelsPerWidth = texture2d.width / width_pieces;
-                float pixelsPerHeight = texture2d.height / height_pieces;
-                //Go through each piece in the array and assign the image to it.
-                for (int x = 0; x < width_pieces; x++) {
-                    for (int y = 0; y < height_pieces; y++) {
-                        BoxCollider2D collider = pieces[x, y].GetComponent<BoxCollider2D>();
-                        Rect rect = new Rect(pixelsPerWidth * x,
-                        pixelsPerHeight * y, pixelsPerWidth, pixelsPerHeight);
-                        sprite = Sprite.Create(texture2d, rect, Vector2.zero);
-                        if (sprite != null) {
-                            SpriteRenderer renderer = pieces[x, y].GetComponent<PuzzlePiece>().GetSpriteRenderer();
-                            renderer.sprite = sprite;
-                            float xScale = 1f;
-                            float yScale = 1f;
-                            if (collider.size.x * 100f < sprite.rect.width) {
-                                xScale = (collider.size.x * 100f) / sprite.rect.width;
-                            }
-                            if (collider.size.y * 100f < sprite.rect.height) {
-                                yScale = (collider.size.y * 100f) / sprite.rect.height;
-                            }
-                            PuzzlePiece piece = pieces[x, y].GetComponent<PuzzlePiece>();
-                            piece.SetImagePosition(new Vector2(collider.size.x / -2f, collider.size.y / -2f));
-                            piece.SetImageScale(new Vector3(xScale, yScale));
-                            piece.SetCorrectPosition(x, y);
-                        }
+    private void CropImage() {
+        //Load pieces
+        GameObject[,] pieces = createdPieces;
+        float pixelsPerWidth = image.width / width_pieces;
+        float pixelsPerHeight = image.height / height_pieces;
+        //Go through each piece in the array and assign the image to it.
+        for (int x = 0; x < width_pieces; x++) {
+            for (int y = 0; y < height_pieces; y++) {
+                Sprite sprite = null;
+                BoxCollider2D collider = pieces[x, y].GetComponent<BoxCollider2D>();
+                Rect rect = new Rect(pixelsPerWidth * x,
+                pixelsPerHeight * y, pixelsPerWidth, pixelsPerHeight);
+                sprite = Sprite.Create(image, rect, Vector2.zero);
+                if (sprite != null) {
+                    SpriteRenderer renderer = pieces[x, y].GetComponent<PuzzlePiece>().GetSpriteRenderer();
+                    renderer.sprite = sprite;
+                    float xScale = 1f;
+                    float yScale = 1f;
+                    if (collider.size.x * 100f < sprite.rect.width) {
+                        xScale = (collider.size.x * 100f) / sprite.rect.width;
+                    } else if(collider.size.x * 100 > sprite.rect.width) {
+                        xScale = sprite.rect.width / (collider.size.x * 100f);
                     }
+                    if (collider.size.y * 100f < sprite.rect.height) {
+                        yScale = (collider.size.y * 100f) / sprite.rect.height;
+                    } else if (collider.size.y * 100 > sprite.rect.height) {
+                        yScale = sprite.rect.height / (collider.size.y * 100f);
+                    }
+                    PuzzlePiece piece = pieces[x, y].GetComponent<PuzzlePiece>();
+                    piece.SetImagePosition(new Vector2(collider.size.x / -2f, collider.size.y / -2f));
+                    piece.SetImageScale(new Vector3(xScale, yScale));
+                    piece.SetCorrectPosition(x, y);
                 }
             }
         }
