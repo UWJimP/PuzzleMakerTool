@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class PuzzleSlot : MonoBehaviour {
 
@@ -20,10 +19,21 @@ public class PuzzleSlot : MonoBehaviour {
     [SerializeField]
     private BoxCollider2D boxCollider;
 
+    [SerializeField]
+    private GameObject image;
+
+    /// <summary>
+    /// The limit of how far a piece has to be before it snaps.
+    /// </summary>
+    private float snapDistanceX;
+
+    private float snapDistanceY;
+
     // Start is called before the first frame update
     void Start() {
-        if(boxCollider == null) {
+        if(boxCollider == null || image == null) {
             boxCollider = null;
+            image = null;
         }
     }
 
@@ -33,6 +43,27 @@ public class PuzzleSlot : MonoBehaviour {
     /// <param name="vector2"></param>
     public void SetBound(Vector2 vector2) {
         boxCollider.size = vector2;
+        snapDistanceX = boxCollider.size.x / 2f;
+        snapDistanceY = boxCollider.size.y / 2f;
+        Sprite sprite = image.GetComponent<SpriteRenderer>().sprite;
+        float spriteX = sprite.rect.width / 16f;
+        float spriteY = sprite.rect.height / 16f;
+        float scaleX = 1f;
+        float scaleY = 1f;
+        //Debug.Log("Sprite:" + sprite.rect.width + " " + sprite.rect.height);
+        //Debug.Log("BoxCollider:" + boxCollider.size.x + " " + boxCollider.size.y);
+        if(boxCollider.size.x < spriteX) {
+            scaleX = boxCollider.size.x / spriteX;
+        } else if(boxCollider.size.x > spriteX) {
+            scaleX = spriteX / boxCollider.size.x;
+        }
+        if (boxCollider.size.y < spriteY) {
+            scaleY = boxCollider.size.y / spriteY;
+        } else if (boxCollider.size.y > spriteY) {
+            scaleY = spriteY / boxCollider.size.y;
+        }
+        //Debug.Log("Scale:" + scaleX + " " + scaleY);
+        image.transform.localScale = new Vector3(scaleX, scaleY);
     }
 
     /// <summary>
@@ -70,9 +101,11 @@ public class PuzzleSlot : MonoBehaviour {
         if(collision.gameObject.CompareTag("Puzzle Piece")) {
             PuzzlePiece piece = collision.gameObject.GetComponent<PuzzlePiece>();
             //Debug.Log(piece);
-            if (Mathf.Abs(collision.transform.localPosition.x - transform.localPosition.x) <= 1f &&
-                Mathf.Abs(collision.transform.localPosition.y - transform.localPosition.y) <= 1f && !piece.IsMoving()) {
+            if (Mathf.Abs(collision.transform.localPosition.x - transform.localPosition.x) < snapDistanceX &&
+                Mathf.Abs(collision.transform.localPosition.y - transform.localPosition.y) < snapDistanceY && 
+                !piece.IsMoving()) {
                 //Debug.Log("Triggered");
+                //Debug.Log(snapDistanceX + " " + snapDistanceY);
                 collision.gameObject.transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, 0f);
             }
         }
