@@ -11,6 +11,8 @@ public class SwapDropData : MonoBehaviour {
     [SerializeField]
     private string image_url;
 
+    private Texture2D texture2d;
+
     // Start is called before the first frame update
     void Start() {
         puzzle_width = 3;
@@ -41,5 +43,13 @@ public class SwapDropData : MonoBehaviour {
 
     public string GetURL() {
         return image_url;
+    }
+
+    public void SetTexture(Texture2D texture) {
+        texture2d = texture;
+    }
+
+    public Texture2D GetTexture() {
+        return texture2d;
     }
 }

@@ -55,6 +55,10 @@ public class SwapDropCreator : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start() {
+        InitializeCreator3();
+    }
+
+    private void InitializeCreator() {
         puzzlePiecesList = new List<GameObject>();
         GameObject dataObject = GameObject.Find("Data Manager");
         dropData = dataObject.GetComponent<SwapDropData>();
@@ -78,8 +82,67 @@ public class SwapDropCreator : MonoBehaviour {
             //string url = "https://uwjimp.github.io/Jim-Portfolio-Website/index.html";
             GeneratePieces();
             StartCoroutine(LoadImage(url));
-            if(errorMessage == null) {
-                
+            if (errorMessage == null) {
+
+                MovePiecesToContainer();
+            }
+        }
+    }
+
+    private void InitializeCreator2() {
+        puzzlePiecesList = new List<GameObject>();
+        GameObject dataObject = GameObject.Find("Data Manager");
+        dropData = dataObject.GetComponent<SwapDropData>();
+
+        if (puzzlePiece == null || puzzleBoard == null || puzzleSlot == null) {
+            puzzlePiece = null;
+            puzzleBoard = null;
+            puzzleSlot = null;
+        }
+
+        width_pieces = dropData.GetWidth();
+        height_pieces = dropData.GetHeight();
+        string url = dropData.GetURL();
+
+        image = new Texture2D(0, 0);
+        errorMessage = null;
+        if (width_pieces > 0 && height_pieces > 0 && puzzlePiece != null && puzzleBoard != null && puzzleSlot != null) {
+            createdPieces = new GameObject[width_pieces, height_pieces];
+            transform.position = new Vector3(puzzleBoard.transform.position.x, puzzleBoard.transform.position.y, 0f);
+            //string url = "https://uwjimp.github.io/Jim-Portfolio-Website/assets/img/img_021.jpg";
+            //string url = "https://uwjimp.github.io/Jim-Portfolio-Website/index.html";
+            GeneratePieces();
+            LoadImage();
+            if (errorMessage == null) {
+                MovePiecesToContainer();
+            }
+        }
+    }
+
+    private void InitializeCreator3() {
+        puzzlePiecesList = new List<GameObject>();
+        GameObject dataObject = GameObject.Find("Data Manager");
+        dropData = dataObject.GetComponent<SwapDropData>();
+
+        if (puzzlePiece == null || puzzleBoard == null || puzzleSlot == null) {
+            puzzlePiece = null;
+            puzzleBoard = null;
+            puzzleSlot = null;
+        }
+
+        width_pieces = dropData.GetWidth();
+        height_pieces = dropData.GetHeight();
+        image = dropData.GetTexture();
+
+        errorMessage = null;
+        if (width_pieces > 0 && height_pieces > 0 && puzzlePiece != null && puzzleBoard != null && puzzleSlot != null) {
+            createdPieces = new GameObject[width_pieces, height_pieces];
+            transform.position = new Vector3(puzzleBoard.transform.position.x, puzzleBoard.transform.position.y, 0f);
+            //string url = "https://uwjimp.github.io/Jim-Portfolio-Website/assets/img/img_021.jpg";
+            //string url = "https://uwjimp.github.io/Jim-Portfolio-Website/index.html";
+            GeneratePieces();
+            LoadImage();
+            if (errorMessage == null) {
                 MovePiecesToContainer();
             }
         }
@@ -123,6 +186,10 @@ public class SwapDropCreator : MonoBehaviour {
         
         //puzzleBoard.transform.position = new Vector3(-1000f, -1000f, -1000f);
         puzzleBoard.enabled = false;
+    }
+
+    private void LoadImage() {
+        CropImage();
     }
 
     /// <summary>

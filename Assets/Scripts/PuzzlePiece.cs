@@ -1,7 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
+/// <summary>
+/// The puzzle piece of the system.
+/// </summary>
 public class PuzzlePiece : MonoBehaviour {
 
     [SerializeField]
@@ -27,6 +28,9 @@ public class PuzzlePiece : MonoBehaviour {
         correctY = 0;
     }
 
+    /// <summary>
+    /// Updates the piece's placement in real time.
+    /// </summary>
     private void Update() {
         if (moving) {
             Vector3 mousePos;
@@ -37,6 +41,10 @@ public class PuzzlePiece : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Tells if the piece is moving.
+    /// </summary>
+    /// <returns>If the piece is moving.</returns>
     public bool IsMoving() {
         return moving;
     }
