@@ -13,8 +13,11 @@ public class SwapDropData : MonoBehaviour {
 
     private Texture2D texture2d;
 
+    public static SwapDropData instance;
+
     // Start is called before the first frame update
     void Start() {
+        //if(instance == null) {instance = this;} else {Destroy(gameObject);}
         puzzle_width = 3;
         puzzle_height = 3;
         image_url = "";

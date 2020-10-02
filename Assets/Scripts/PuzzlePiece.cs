@@ -14,9 +14,16 @@ public class PuzzlePiece : MonoBehaviour {
     [SerializeField]
     private int correctY;
 
+    private float lastPosX;
+    private float lastPosY;
+
     private float startPosX;
     private float startPosY;
     private bool moving;
+
+    [SerializeField]
+    private BoxCollider2D box;
+    private Vector2 screenBounds;
 
     // Start is called before the first frame update
     void Start() {
@@ -26,6 +33,11 @@ public class PuzzlePiece : MonoBehaviour {
         moving = false;
         correctX = 0;
         correctY = 0;
+        lastPosX = 0;
+        lastPosY = 0;
+        screenBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width,
+            Screen.height, Camera.main.transform.position.z));
+        box = GetComponent<BoxCollider2D>();
     }
 
     /// <summary>
@@ -37,7 +49,18 @@ public class PuzzlePiece : MonoBehaviour {
             mousePos = Input.mousePosition;
             mousePos = Camera.main.ScreenToWorldPoint(mousePos);
 
-            gameObject.transform.localPosition = new Vector3(mousePos.x - startPosX, mousePos.y - startPosY, 0f);
+            Vector3 newPosition = new Vector3(mousePos.x - startPosX, mousePos.y - startPosY, 0f);
+            if ((newPosition.x + (box.size.x / 2)) > screenBounds.x) {
+                newPosition.x = screenBounds.x - (box.size.x / 2);
+            } else if ((newPosition.x - (box.size.x / 2)) < screenBounds.x * -1) {
+                newPosition.x = (screenBounds.x * -1) + (box.size.x / 2);
+            }
+            if ((newPosition.y + (box.size.y / 2)) > screenBounds.y) {
+                newPosition.y = screenBounds.y - (box.size.y / 2);
+            } else if ((newPosition.y - (box.size.y / 2)) < screenBounds.y * -1) {
+                newPosition.y = (screenBounds.y * -1) + (box.size.y / 2);
+            }
+            gameObject.transform.localPosition = newPosition;
         }
     }
 
@@ -58,19 +81,33 @@ public class PuzzlePiece : MonoBehaviour {
             startPosX = mousePos.x - this.transform.localPosition.x;
             startPosY = mousePos.y - this.transform.localPosition.y;
 
+            if(!moving) {
+                lastPosX = transform.position.x;
+                lastPosY = transform.position.y;
+            }
+
             moving = true;
         }
     }
 
     private void OnMouseUp() {
         moving = false;
-
         //if (Mathf.Abs(transform.localPosition.x - correctForm.transform.localPosition.x) <= 0.5f &&
         //Mathf.Abs(transform.localPosition.y - correctForm.transform.localPosition.y) <= 0.5f) {
         //transform.localPosition = new Vector3(correctForm.transform.localPosition.x, correctForm.transform.localPosition.y, 0f);
         //} else {
         //transform.localPosition = new Vector3(resetPos.x, resetPos.y, 0f);
         //}
+    }
+
+    public void SetPosition(float x, float y) {
+        transform.position = new Vector3(x, y, 0f);
+        lastPosX = x;
+        lastPosY = y;
+    }
+
+    public Vector3 GetLastPosition() {
+        return new Vector3(lastPosX, lastPosY, 0f);
     }
 
     public SpriteRenderer GetSpriteRenderer() {

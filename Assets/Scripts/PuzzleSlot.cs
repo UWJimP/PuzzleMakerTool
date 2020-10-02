@@ -22,6 +22,10 @@ public class PuzzleSlot : MonoBehaviour {
     [SerializeField]
     private GameObject image;
 
+    private bool containsPiece;
+
+    private PuzzlePiece puzzlePiece;
+
     /// <summary>
     /// The limit of how far a piece has to be before it snaps.
     /// </summary>
@@ -35,6 +39,8 @@ public class PuzzleSlot : MonoBehaviour {
             boxCollider = null;
             image = null;
         }
+        containsPiece = false;
+        puzzlePiece = null;
     }
 
     /// <summary>
@@ -102,11 +108,28 @@ public class PuzzleSlot : MonoBehaviour {
             PuzzlePiece piece = collision.gameObject.GetComponent<PuzzlePiece>();
             //Debug.Log(piece);
             if (Mathf.Abs(collision.transform.localPosition.x - transform.localPosition.x) < snapDistanceX &&
-                Mathf.Abs(collision.transform.localPosition.y - transform.localPosition.y) < snapDistanceY && 
-                !piece.IsMoving()) {
+                Mathf.Abs(collision.transform.localPosition.y - transform.localPosition.y) < snapDistanceY) {
                 //Debug.Log("Triggered");
                 //Debug.Log(snapDistanceX + " " + snapDistanceY);
-                collision.gameObject.transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, 0f);
+                if(!piece.IsMoving()) {
+                    if(containsPiece) {
+                        if(!piece.Equals(puzzlePiece)) {
+                            Vector3 lastPosition = piece.GetLastPosition();
+                            puzzlePiece.SetPosition(lastPosition.x, lastPosition.y);
+                            puzzlePiece = piece;
+                        }
+                    } else {
+                        //collision.gameObject.transform.localPosition = new Vector3(transform.localPosition.x,
+                        //    transform.localPosition.y, 0f);
+                        //piece.SetPosition(transform.localPosition.x, transform.position.y);
+                        puzzlePiece = piece;
+                        containsPiece = true;
+                    }
+                    piece.SetPosition(transform.localPosition.x, transform.position.y);
+                } else if(piece.IsMoving() && containsPiece && piece.Equals(puzzlePiece)) {
+                    containsPiece = false;
+                    puzzlePiece = null;
+                }
             }
         }
     }

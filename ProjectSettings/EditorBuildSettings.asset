@@ -6,9 +6,12 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Test User Input Build.unity
+    path: Assets/Scenes/DragDropImageScreen.unity
     guid: f782f7b58c42d484ea2861db3d6916b7
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/SwapAndDropScene.unity
     guid: c179db910be6fb34696326cc6f8293b9
+  - enabled: 1
+    path: Assets/Scenes/SwapAndDrop2Scene.unity
+    guid: 1d2c2e7360fbac044befa391628afc39
   m_configObjects: {}

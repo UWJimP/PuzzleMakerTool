@@ -1,15 +1,21 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Runtime.InteropServices;
- 
+
 public class CanvasScript : MonoBehaviour {
     [DllImport("__Internal")]
     private static extern void ImageUploaderInit();
 
     public RawImage rawImage;
     private SwapDropData data;
+
+    void Start() {
+        ImageUploaderInit();
+        data = GameObject.Find("Data Manager").GetComponent<SwapDropData>();
+    }
 
     //IEnumerator LoadTexture (string url) {
     //    WWW image = new WWW (url);
@@ -43,9 +49,8 @@ public class CanvasScript : MonoBehaviour {
     public void FileAngularSelect(string url) {
         StartCoroutine(LoadImage(url));
     }
- 
-    void Start () {
-        ImageUploaderInit();
-        data = GameObject.Find("Data Manager").GetComponent<SwapDropData>();
+
+    public void Submit() {
+        SceneManager.LoadScene("SwapAndDropScene");
     }
 }
