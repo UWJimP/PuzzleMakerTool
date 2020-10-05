@@ -9,6 +9,9 @@ public class PuzzlePiece : MonoBehaviour {
     private GameObject image;
 
     [SerializeField]
+    private GameObject alpha;
+
+    [SerializeField]
     private int correctX;
 
     [SerializeField]
@@ -23,13 +26,11 @@ public class PuzzlePiece : MonoBehaviour {
 
     [SerializeField]
     private BoxCollider2D box;
+
     private Vector2 screenBounds;
 
     // Start is called before the first frame update
     void Start() {
-        if(image == null) {
-            image = null;
-        }
         moving = false;
         correctX = 0;
         correctY = 0;
@@ -38,6 +39,12 @@ public class PuzzlePiece : MonoBehaviour {
         screenBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width,
             Screen.height, Camera.main.transform.position.z));
         box = GetComponent<BoxCollider2D>();
+    }
+
+    private void NullSetter() {
+        image = null;
+        box = null;
+        alpha = null;
     }
 
     /// <summary>
@@ -81,7 +88,7 @@ public class PuzzlePiece : MonoBehaviour {
             startPosX = mousePos.x - this.transform.localPosition.x;
             startPosY = mousePos.y - this.transform.localPosition.y;
 
-            if(!moving) {
+            if (!moving) {
                 lastPosX = transform.position.x;
                 lastPosY = transform.position.y;
             }
@@ -100,6 +107,13 @@ public class PuzzlePiece : MonoBehaviour {
         //}
     }
 
+    private void OnMouseOver() {
+        if (Input.GetMouseButtonUp(1)) {
+            //Debug.Log("Mouse up");
+            transform.Rotate(0, 0, 90);
+        }
+    }
+
     public void SetPosition(float x, float y) {
         transform.position = new Vector3(x, y, 0f);
         lastPosX = x;
@@ -116,10 +130,30 @@ public class PuzzlePiece : MonoBehaviour {
 
     public void SetImageScale(Vector3 vector3) {
         image.transform.localScale = vector3;
+        alpha.transform.localScale = vector3;
     }
 
     public void SetImagePosition(Vector2 vector2) {
         image.transform.localPosition = vector2;
+        //alpha.transform.localPosition = vector2;
+    }
+
+    public void SetAlphaSize() {
+        float xScale = 1f;
+        float yScale = 1f;
+        Vector2 spriteSize = alpha.GetComponent<SpriteRenderer>().size;
+        Vector2 boxSize = box.size;
+        if(spriteSize.x > boxSize.x) {
+            xScale = spriteSize.x / boxSize.x;
+        } else if(boxSize.x > spriteSize.x) {
+            xScale = boxSize.x / spriteSize.x;
+        }
+        if (spriteSize.y > boxSize.y) {
+            yScale = spriteSize.y / boxSize.y;
+        } else if (boxSize.y > spriteSize.y) {
+            yScale = boxSize.y / spriteSize.y;
+        }
+        alpha.transform.localScale = new Vector2(xScale, yScale);
     }
 
     public void SetCorrectPosition(int x, int y) {

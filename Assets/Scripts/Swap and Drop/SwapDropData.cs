@@ -2,6 +2,12 @@
 
 public class SwapDropData : MonoBehaviour {
 
+    public enum Orientation {
+        square,
+        portrait,
+        landscape
+    }
+
     [SerializeField]
     private int puzzle_width;
 
@@ -11,7 +17,11 @@ public class SwapDropData : MonoBehaviour {
     [SerializeField]
     private string image_url;
 
+    private bool randomRotation;
+
     private Texture2D texture2d;
+
+    private Orientation orientation;
 
     public static SwapDropData instance;
 
@@ -21,6 +31,7 @@ public class SwapDropData : MonoBehaviour {
         puzzle_width = 3;
         puzzle_height = 3;
         image_url = "";
+        randomRotation = false;
         DontDestroyOnLoad(gameObject);
     }
 
@@ -54,5 +65,31 @@ public class SwapDropData : MonoBehaviour {
 
     public Texture2D GetTexture() {
         return texture2d;
+    }
+
+    public void SetRandomRotation(int value) {
+        if(value > 0) {
+            randomRotation = true;
+        } else {
+            randomRotation = false;
+        }
+    }
+
+    public bool IsRandomRotation() {
+        return randomRotation;
+    }
+
+    public void SetOrientation(string form) {
+        if (form.Equals("square")) {
+            orientation = Orientation.square;
+        } else if(form.Equals("portrait")) {
+            orientation = Orientation.portrait;
+        } else {
+            orientation = Orientation.landscape;
+        }
+    }
+
+    public Orientation GetOrientation() {
+        return orientation;
     }
 }

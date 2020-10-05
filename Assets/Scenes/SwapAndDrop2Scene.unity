@@ -271,6 +271,16 @@ PrefabInstance:
       propertyPath: isDebug
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4504196373450119326, guid: 0d703a10d6c827d4c8ed552e78539972,
+        type: 3}
+      propertyPath: m_Size.x
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4504196373450119326, guid: 0d703a10d6c827d4c8ed552e78539972,
+        type: 3}
+      propertyPath: m_Size.y
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 4504196373450119327, guid: 0d703a10d6c827d4c8ed552e78539972,
         type: 3}
       propertyPath: m_Name

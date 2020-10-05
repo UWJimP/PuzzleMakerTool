@@ -52,21 +52,25 @@ public class PuzzleSlot : MonoBehaviour {
         snapDistanceX = boxCollider.size.x / 2f;
         snapDistanceY = boxCollider.size.y / 2f;
         Sprite sprite = image.GetComponent<SpriteRenderer>().sprite;
-        float spriteX = sprite.rect.width / 16f;
-        float spriteY = sprite.rect.height / 16f;
+        float spriteX = sprite.rect.width / 16;
+        float spriteY = sprite.rect.height / 16;
         float scaleX = 1f;
         float scaleY = 1f;
         //Debug.Log("Sprite:" + sprite.rect.width + " " + sprite.rect.height);
         //Debug.Log("BoxCollider:" + boxCollider.size.x + " " + boxCollider.size.y);
         if(boxCollider.size.x < spriteX) {
-            scaleX = boxCollider.size.x / spriteX;
-        } else if(boxCollider.size.x > spriteX) {
+            //scaleX = boxCollider.size.x / spriteX;
             scaleX = spriteX / boxCollider.size.x;
+        } else if(boxCollider.size.x > spriteX) {
+            //scaleX = spriteX / boxCollider.size.x;
+            scaleX = boxCollider.size.x / spriteX;
         }
         if (boxCollider.size.y < spriteY) {
-            scaleY = boxCollider.size.y / spriteY;
-        } else if (boxCollider.size.y > spriteY) {
+            //scaleY = boxCollider.size.y / spriteY;
             scaleY = spriteY / boxCollider.size.y;
+        } else if (boxCollider.size.y > spriteY) {
+            //scaleY = spriteY / boxCollider.size.y;
+            scaleY = boxCollider.size.y / spriteY;
         }
         //Debug.Log("Scale:" + scaleX + " " + scaleY);
         image.transform.localScale = new Vector3(scaleX, scaleY);

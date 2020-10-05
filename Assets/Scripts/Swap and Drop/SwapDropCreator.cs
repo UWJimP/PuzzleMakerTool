@@ -7,6 +7,9 @@ public class SwapDropCreator : MonoBehaviour {
 
     public bool isDebug;
 
+    [SerializeField]
+    private bool randomRotation;
+
     /// <summary>
     /// The number of puzzle pieces along the width.
     /// </summary>
@@ -58,8 +61,9 @@ public class SwapDropCreator : MonoBehaviour {
     // Start is called before the first frame update
     void Start() {
         if(isDebug) {
-            DebugInitialize(4, 4,
-                "https://i.pinimg.com/236x/7b/4d/2c/7b4d2c600f17fb2cff1fd7418306c5bc--fantasy-armor-dark-fantasy.jpg");
+            string test = "https://vignette.wikia.nocookie.net/among-us-wiki/images/a/ab/Cyan.png/revision/latest/scale-to-width-down/340?cb=20200927084517";
+            //string test = "https://i.pinimg.com/236x/7b/4d/2c/7b4d2c600f17fb2cff1fd7418306c5bc--fantasy-armor-dark-fantasy.jpg";
+            DebugInitialize(4, 4, test);
         } else {
             InitializeCreator3();
         }
@@ -141,6 +145,14 @@ public class SwapDropCreator : MonoBehaviour {
         width_pieces = dropData.GetWidth();
         height_pieces = dropData.GetHeight();
         image = dropData.GetTexture();
+        randomRotation = dropData.IsRandomRotation();
+        if (dropData.GetOrientation() == SwapDropData.Orientation.square) {
+            puzzleBoard.size.Set(8, 8);
+        } else if (dropData.GetOrientation() == SwapDropData.Orientation.portrait) {
+            puzzleBoard.size.Set(6, 8);
+        } else {
+            puzzleBoard.size.Set(8, 6);
+        }
 
         errorMessage = null;
         if (width_pieces > 0 && height_pieces > 0 && puzzlePiece != null && puzzleBoard != null && puzzleSlot != null) {
@@ -150,6 +162,9 @@ public class SwapDropCreator : MonoBehaviour {
             LoadImage();
             if (errorMessage == null) {
                 MovePiecesToContainer();
+                if (randomRotation) {
+                    RotatePieces();
+                }
                 GameObject data = GameObject.Find("Data Manager");
                 Destroy(data);
             }
@@ -178,6 +193,9 @@ public class SwapDropCreator : MonoBehaviour {
             StartCoroutine(LoadImage(url));
             if (errorMessage == null) {
                 MovePiecesToContainer();
+                if(randomRotation) {
+                    RotatePieces();
+                }
             }
         }
     }
@@ -286,6 +304,7 @@ public class SwapDropCreator : MonoBehaviour {
                     piece.SetImagePosition(new Vector2(collider.size.x / -2f, collider.size.y / -2f));
                     piece.SetImageScale(new Vector3(xScale, yScale));
                     piece.SetCorrectPosition(x, y);
+                    piece.SetAlphaSize();
                 }
             }
         }
@@ -329,6 +348,13 @@ public class SwapDropCreator : MonoBehaviour {
             float x = Random.Range(containers[index].Start_x, containers[index].End_x);
             float y = Random.Range(containers[index].Start_y, containers[index].End_y);
             piece.GetComponent<PuzzlePiece>().SetPosition(x, y);
+        }
+    }
+
+    private void RotatePieces() {
+        foreach(GameObject piece in puzzlePiecesList) {
+            int rotation = Random.Range(0, 4) * 90;
+            piece.transform.Rotate(0, 0, rotation);
         }
     }
 
@@ -413,6 +439,7 @@ public class SwapDropCreator : MonoBehaviour {
                     piece.SetImagePosition(new Vector2(collider.size.x / -2f, collider.size.y / -2f));
                     piece.SetImageScale(new Vector3(xScale, yScale));
                     piece.SetCorrectPosition(x, y);
+                    piece.SetAlphaSize();
                 }
             }
         }

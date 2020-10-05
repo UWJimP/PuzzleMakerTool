@@ -10,11 +10,20 @@ public class CanvasScript : MonoBehaviour {
     private static extern void ImageUploaderInit();
 
     public RawImage rawImage;
+    public RawImage[] rawImages;
     private SwapDropData data;
 
     void Start() {
         ImageUploaderInit();
         data = GameObject.Find("Data Manager").GetComponent<SwapDropData>();
+        rawImages[0].enabled = true;
+        rawImages[1].enabled = false;
+        rawImages[2].enabled = false;
+        data.SetOrientation("square");
+        foreach(RawImage image in rawImages) {
+            Debug.Log(image.enabled);
+        }
+        SetOrientation("square");
     }
 
     //IEnumerator LoadTexture (string url) {
@@ -35,7 +44,10 @@ public class CanvasScript : MonoBehaviour {
             //Debug.Log(www.downloadHandler.data);
             Texture2D pic = new Texture2D(0, 0);
             pic.LoadImage(www.downloadHandler.data);
-            rawImage.texture = pic;
+            //rawImage.texture = pic;
+            foreach(RawImage image in rawImages) {
+                image.texture = pic;
+            }
             data.SetTexture(pic);
         } else {
             Debug.Log(www.error);
@@ -48,6 +60,23 @@ public class CanvasScript : MonoBehaviour {
 
     public void FileAngularSelect(string url) {
         StartCoroutine(LoadImage(url));
+    }
+
+    public void SetOrientation(string orientation) {
+        data.SetOrientation(orientation);
+        if (orientation.Equals("square")) {
+            rawImages[0].enabled = true;
+            rawImages[1].enabled = false;
+            rawImages[2].enabled = false;
+        } else if (orientation.Equals("portrait")) {
+            rawImages[0].enabled = false;
+            rawImages[1].enabled = true;
+            rawImages[2].enabled = false;
+        } else {
+            rawImages[0].enabled = false;
+            rawImages[1].enabled = false;
+            rawImages[2].enabled = true;
+        }
     }
 
     public void Submit() {
