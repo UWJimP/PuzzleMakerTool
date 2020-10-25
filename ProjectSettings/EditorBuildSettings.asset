@@ -9,7 +9,7 @@ EditorBuildSettings:
     path: Assets/Scenes/DragDropImageScreen.unity
     guid: f782f7b58c42d484ea2861db3d6916b7
   - enabled: 0
-    path: Assets/Scenes/Test/SwapAndDropScene.unity
+    path: Assets/Scenes/SwapAndDropScene.unity
     guid: c179db910be6fb34696326cc6f8293b9
   - enabled: 1
     path: Assets/Scenes/SwapAndDrop2Scene.unity
