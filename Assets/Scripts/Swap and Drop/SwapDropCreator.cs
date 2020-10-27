@@ -63,7 +63,7 @@ public class SwapDropCreator : MonoBehaviour {
         if(isDebug) {
             string test = "https://vignette.wikia.nocookie.net/among-us-wiki/images/a/ab/Cyan.png/revision/latest/scale-to-width-down/340?cb=20200927084517";
             //string test = "https://i.pinimg.com/236x/7b/4d/2c/7b4d2c600f17fb2cff1fd7418306c5bc--fantasy-armor-dark-fantasy.jpg";
-            DebugInitialize(4, 4, test);
+            DebugInitialize(5, 5, test);
         } else {
             InitializeCreator3();
         }
