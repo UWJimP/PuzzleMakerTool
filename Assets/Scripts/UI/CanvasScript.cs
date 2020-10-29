@@ -6,15 +6,25 @@ using System.Collections;
 using System.Runtime.InteropServices;
 
 public class CanvasScript : MonoBehaviour {
+    //[DllImport("__Internal")]
+    //private static extern void ImageUploaderInit();
+
     [DllImport("__Internal")]
-    private static extern void ImageUploaderInit();
+    private static extern void StartLoading();
+
+    [DllImport("__Internal")]
+    private static extern void FinishLoading();
+
+    [DllImport("__Internal")]
+    private static extern void ChangeMenu(int value);
 
     public RawImage rawImage;
     public RawImage[] rawImages;
     private SwapDropData data;
 
     void Start() {
-        ImageUploaderInit();
+        //ImageUploaderInit();
+        StartLoading();
         data = GameObject.Find("Data Manager").GetComponent<SwapDropData>();
         rawImages[0].enabled = true;
         rawImages[1].enabled = false;
@@ -24,6 +34,7 @@ public class CanvasScript : MonoBehaviour {
             Debug.Log(image.enabled);
         }
         SetOrientation("square");
+        FinishLoading();
     }
 
     //IEnumerator LoadTexture (string url) {
@@ -59,7 +70,9 @@ public class CanvasScript : MonoBehaviour {
     //}
 
     public void FileAngularSelect(string url) {
+        StartLoading();
         StartCoroutine(LoadImage(url));
+        FinishLoading();
     }
 
     public void SetOrientation(string orientation) {

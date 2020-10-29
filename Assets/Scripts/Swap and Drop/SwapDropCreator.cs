@@ -2,8 +2,15 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
+using System.Runtime.InteropServices;
 
 public class SwapDropCreator : MonoBehaviour {
+
+    [DllImport("__Internal")]
+    private static extern void FinishLoading();
+
+    [DllImport("__Internal")]
+    private static extern void ChangeMenu(int value);
 
     public bool isDebug;
 
@@ -64,8 +71,13 @@ public class SwapDropCreator : MonoBehaviour {
             string test = "https://vignette.wikia.nocookie.net/among-us-wiki/images/a/ab/Cyan.png/revision/latest/scale-to-width-down/340?cb=20200927084517";
             //string test = "https://i.pinimg.com/236x/7b/4d/2c/7b4d2c600f17fb2cff1fd7418306c5bc--fantasy-armor-dark-fantasy.jpg";
             DebugInitialize(5, 5, test);
+            FinishLoading();
+            ChangeMenu((int)MenuType.NONE);
+            ChangeMenu((int)MenuType.DRAGDROP);
         } else {
             InitializeCreator3();
+            FinishLoading();
+            ChangeMenu((int)MenuType.DRAGDROP);
         }
     }
 

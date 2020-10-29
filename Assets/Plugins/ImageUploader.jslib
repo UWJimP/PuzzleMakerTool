@@ -11,4 +11,15 @@ var ImageUploaderPlugin = {
     //document.body.appendChild(fileInput);
   }
 };
-mergeInto(LibraryManager.library, ImageUploaderPlugin);
+var MenuSelection = {
+  FinishLoading: function() {
+	window['menu'].component.finishLoading();
+  },
+  StartLoading: function() {
+	window['menu'].component.startLoading();
+  },
+  ChangeMenu: function(value) {
+	window['menu'].component.changeMenu(value);
+  }
+}
+mergeInto(LibraryManager.library, MenuSelection);
