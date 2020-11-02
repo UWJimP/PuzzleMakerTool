@@ -34,6 +34,7 @@ public class CanvasScript : MonoBehaviour {
             Debug.Log(image.enabled);
         }
         SetOrientation("square");
+        ChangeMenu((int)PuzzleType.DRAGDROP);
         FinishLoading();
     }
 
@@ -93,6 +94,6 @@ public class CanvasScript : MonoBehaviour {
     }
 
     public void Submit() {
-        SceneManager.LoadScene("SwapAndDropScene");
+        SceneManager.LoadScene("SwapAndDrop2Scene");
     }
 }

@@ -1,29 +1,62 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
+using System.Runtime.InteropServices;
 
 public class FirebaseController : MonoBehaviour {
+
+    [DllImport("__Internal")]
+    private static extern void StartLoading();
+
+    [DllImport("__Internal")]
+    private static extern void FinishLoading();
+
+    [DllImport("__Internal")]
+    private static extern void SendAngularError(string error);
+
+    [DllImport("__Internal")]
+    private static extern void SendAngularPuzzleCode(string code);
 
     private readonly string FB_API = "https://angular-random-name-picker.firebaseio.com/";
     private readonly string ERROR_0 = "Error 0: Data Not Found";
     private readonly int CODE_LENGTH = 6;
 
+    public bool isLoading;
+
     public string Code { get; set; }
 
-    private string LoadedJSON { get; set; }
+    public string LoadedJSON { get; set; }
 
-    private string ErrorMessage { get; set; }
-
-    //public SpriteRenderer SaveSprite;
-    //public SpriteRenderer LoadSprite;
-
+    public string ErrorMessage { get; set; }
 
     // Start is called before the first frame update
     void Start() {
         Code = "";
         LoadedJSON = "";
         ErrorMessage = "";
+        isLoading = false;
+        //if (instance == null) {
+        //    instance = this;
+        //} else {
+        //    Destroy(gameObject);
+        //}
+    }
+
+    public void LoadPuzzle(string linkCode) {
+        StartLoading();
+        StartCoroutine(LoadData(FB_API + "test/", linkCode));
+    }
+
+    public void SaveNewPuzzle(string path, FirebaseJSON json) {
+        StartLoading();
+        StartCoroutine(SaveNewData(path, json));
+        FinishLoading();
+    }
+
+    public void UpdatePuzzle(string path, FirebaseJSON json) {
+        StartLoading();
+        StartCoroutine(UpdateData(path, json));
+        FinishLoading();
     }
 
     /// <summary>
@@ -32,7 +65,7 @@ public class FirebaseController : MonoBehaviour {
     /// <param name="path"></param>
     /// <param name="linkCode"></param>
     /// <returns></returns>
-    public IEnumerator LoadData(string path, string linkCode) {
+    private IEnumerator LoadData(string path, string linkCode) {
         ErrorMessage = "";
         LoadedJSON = "";
         UnityWebRequest www = UnityWebRequest.Get(path + linkCode + ".json");
@@ -41,14 +74,27 @@ public class FirebaseController : MonoBehaviour {
         if (www.isNetworkError || www.isHttpError) {
             Debug.Log(www.error);
             ErrorMessage = www.error;
+            SendAngularError(ErrorMessage);
+            FinishLoading();
         } else {
             string data = www.downloadHandler.text;
             if (string.IsNullOrEmpty(data) || data.Equals("null")) {
                 ErrorMessage = ERROR_0;
+                SendAngularError(ErrorMessage + " from code " + linkCode);
             } else {
-                Debug.Log("Download complete!");
                 LoadedJSON = data;
+                Debug.Log("Download complete!");
+                //Debug.Log("JSON Data: " + LoadedJSON);
+                //PuzzleJSON puzzleJSON = JsonUtility.FromJson<PuzzleJSON>(data);
+                //if(puzzleJSON.puzzleType == PuzzleType.DRAGDROP) {
+                //    DragDropJSON dataJson = JsonUtility.FromJson<DragDropJSON>(puzzleJSON.jsonData);
+                //Debug.Log("DragDropJSON: " + dataJson.GetJSON());
+                //}
+                //Debug.Log("JSON Data: " + puzzleJSON.GetJSON());
+                PuzzleLoadData loader = GameObject.Find("LoadData").GetComponent<PuzzleLoadData>();
+                loader.LoadData(data);
             }
+            FinishLoading();
         }
     }
 
@@ -58,20 +104,27 @@ public class FirebaseController : MonoBehaviour {
     /// <param name="path">The path of the database.</param>
     /// <param name="json">The Saveable JSON data.</param>
     /// <returns></returns>
-    public IEnumerator SaveNewData(string path, FirebaseJSON json) {
+    private IEnumerator SaveNewData(string path, FirebaseJSON json) {
         ErrorMessage = "";
         yield return GenerateUniqueCode();
 
         json.linkCode = Code;
         string data = json.GetJSON();
-        UnityWebRequest www = UnityWebRequest.Put(path + Code + ".json", data);
+        PuzzleJSON puzzleJSON = new PuzzleJSON {
+            puzzleType = json.puzzleType,
+            jsonData = data
+        };
+        string puzzleData = JsonUtility.ToJson(puzzleJSON);
+        UnityWebRequest www = UnityWebRequest.Put(FB_API + path + Code + ".json", puzzleData);
         yield return www.SendWebRequest();
 
         if (www.isNetworkError || www.isHttpError) {
             Debug.Log(www.error);
             ErrorMessage = www.error;
+            SendAngularError(ErrorMessage);
         } else {
             Debug.Log("Upload complete!");
+            SendAngularPuzzleCode(Code);
         }
     }
 
@@ -81,7 +134,7 @@ public class FirebaseController : MonoBehaviour {
     /// <param name="path">The path of the firebase.</param>
     /// <param name="json">The json being updated.</param>
     /// <returns></returns>
-    public IEnumerator UpdateData(string path, FirebaseJSON json) {
+    private IEnumerator UpdateData(string path, FirebaseJSON json) {
         ErrorMessage = "";
         if (string.IsNullOrEmpty(json.linkCode)) {
             Debug.Log("Error: LinkCodes do not match.");

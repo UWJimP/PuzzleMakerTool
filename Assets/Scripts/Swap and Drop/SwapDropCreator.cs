@@ -63,6 +63,8 @@ public class SwapDropCreator : MonoBehaviour {
 
     private SwapDropData dropData;
 
+    public bool isLoader;
+
     public BoxCollider2D[] piecesContainer;
 
     // Start is called before the first frame update
@@ -72,12 +74,16 @@ public class SwapDropCreator : MonoBehaviour {
             //string test = "https://i.pinimg.com/236x/7b/4d/2c/7b4d2c600f17fb2cff1fd7418306c5bc--fantasy-armor-dark-fantasy.jpg";
             DebugInitialize(5, 5, test);
             FinishLoading();
-            ChangeMenu((int)MenuType.NONE);
-            ChangeMenu((int)MenuType.DRAGDROP);
+            ChangeMenu((int)PuzzleType.NONE);
+            ChangeMenu((int)PuzzleType.DRAGDROP);
         } else {
-            InitializeCreator3();
-            FinishLoading();
-            ChangeMenu((int)MenuType.DRAGDROP);
+            if(isLoader) {
+                InitializeCreator3();
+                FinishLoading();
+                ChangeMenu((int)PuzzleType.DRAGDROP);
+            } else {
+                InitializeLoadData();
+            }
         }
     }
 
@@ -142,6 +148,44 @@ public class SwapDropCreator : MonoBehaviour {
         }
     }
 
+    private void InitializeLoadData() {
+        PuzzleLoadData loadData = GameObject.Find("LoadData").GetComponent<PuzzleLoadData>();
+        if (loadData != null) {
+            DragDropJSON dragDropData = JsonUtility.FromJson<DragDropJSON>(loadData.JSONData);
+            width_pieces = dragDropData.width;
+            height_pieces = dragDropData.height;
+            randomRotation = dragDropData.isRotateRandom;
+            if (dragDropData.orientation == SwapDropData.Orientation.square) {
+                puzzleBoard.size.Set(8, 8);
+            } else if (dragDropData.orientation == SwapDropData.Orientation.portrait) {
+                puzzleBoard.size.Set(6, 8);
+            } else {
+                puzzleBoard.size.Set(8, 6);
+            }
+            TextureJSON textureJSON = dragDropData.textureJSON;
+            string imageEncoded = textureJSON.image;
+            byte[] imageDecoded = System.Convert.FromBase64String(imageEncoded);
+            Texture2D imageTexture = new Texture2D(textureJSON.width, textureJSON.height, textureJSON.textureFormat, false);
+            imageTexture.LoadRawTextureData(imageDecoded);
+            imageTexture.Apply();
+            image = imageTexture;
+            if (width_pieces > 0 && height_pieces > 0 && puzzlePiece != null && puzzleBoard != null && puzzleSlot != null) {
+                createdPieces = new GameObject[width_pieces, height_pieces];
+                transform.position = new Vector3(puzzleBoard.transform.position.x, puzzleBoard.transform.position.y, 0f);
+                GeneratePieces();
+                LoadImage();
+                if (errorMessage == null) {
+                    MovePiecesToContainer();
+                    if (randomRotation) {
+                        RotatePieces();
+                    }
+                }
+            }
+        } else {
+            Debug.Log("Error: PuzzleLoadData is null in Loader");
+        }
+    }
+
     private void InitializeCreator3() {
         puzzlePiecesList = new List<GameObject>();
         GameObject dataObject = GameObject.Find("Data Manager");
@@ -177,8 +221,9 @@ public class SwapDropCreator : MonoBehaviour {
                 if (randomRotation) {
                     RotatePieces();
                 }
-                GameObject data = GameObject.Find("Data Manager");
-                Destroy(data);
+                //GameObject data = GameObject.Find("Data Manager");
+                //Destroy(data);
+                //dropData.S
             }
         }
     }

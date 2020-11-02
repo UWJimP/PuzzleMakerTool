@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class SwapDropData : MonoBehaviour {
 
@@ -17,17 +18,27 @@ public class SwapDropData : MonoBehaviour {
     [SerializeField]
     private string image_url;
 
+    [SerializeField]
+    private FirebaseController firebase;
+
     private bool randomRotation;
 
     private Texture2D texture2d;
 
-    private Orientation orientation;
+    private Orientation imageOrientation;
 
     public static SwapDropData instance;
 
     // Start is called before the first frame update
     void Start() {
-        //if(instance == null) {instance = this;} else {Destroy(gameObject);}
+        if(instance == null) {
+            instance = this;
+        } else {
+            Destroy(gameObject);
+        }
+        if(firebase == null) {
+            firebase = null;
+        }
         puzzle_width = 3;
         puzzle_height = 3;
         image_url = "";
@@ -81,15 +92,41 @@ public class SwapDropData : MonoBehaviour {
 
     public void SetOrientation(string form) {
         if (form.Equals("square")) {
-            orientation = Orientation.square;
+            imageOrientation = Orientation.square;
         } else if(form.Equals("portrait")) {
-            orientation = Orientation.portrait;
+            imageOrientation = Orientation.portrait;
         } else {
-            orientation = Orientation.landscape;
+            imageOrientation = Orientation.landscape;
         }
     }
 
     public Orientation GetOrientation() {
-        return orientation;
+        return imageOrientation;
+    }
+
+    public void SaveNewDropData(string path) {
+        firebase.SaveNewPuzzle(path, GenerateJSONObject());
+    }
+
+    private FirebaseJSON GenerateJSONObject() {
+        byte[] textureBytes = texture2d.GetRawTextureData();
+        string encodedBytes = Convert.ToBase64String(textureBytes);
+
+        TextureJSON textureData = new TextureJSON {
+            textureFormat = texture2d.format,
+            width = texture2d.width,
+            height = texture2d.height,
+            image = encodedBytes
+        };
+
+        DragDropJSON json = new DragDropJSON {
+            height = puzzle_height,
+            width = puzzle_width,
+            isRotateRandom = randomRotation,
+            orientation = imageOrientation,
+            textureJSON = textureData
+        };
+
+        return json;
     }
 }

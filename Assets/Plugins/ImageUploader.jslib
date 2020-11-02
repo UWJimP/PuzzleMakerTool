@@ -12,6 +12,7 @@ var ImageUploaderPlugin = {
   }
 };
 var MenuSelection = {
+
   FinishLoading: function() {
 	window['menu'].component.finishLoading();
   },
@@ -20,6 +21,12 @@ var MenuSelection = {
   },
   ChangeMenu: function(value) {
 	window['menu'].component.changeMenu(value);
+  },
+  SendAngularError: function(error) {
+	window.alert(Pointer_stringify(error));
+  },
+  SendAngularPuzzleCode: function(code) {
+	window['code'].component.receiveCode(Pointer_stringify(code));
   }
 }
 mergeInto(LibraryManager.library, MenuSelection);
