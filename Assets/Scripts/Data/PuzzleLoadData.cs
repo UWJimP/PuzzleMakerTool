@@ -8,7 +8,9 @@ public class PuzzleLoadData : MonoBehaviour {
     public void LoadData(string json) {
         PuzzleJSON puzzleJSON = JsonUtility.FromJson<PuzzleJSON>(json);
         JSONData = puzzleJSON.jsonData;
-        if(puzzleJSON.puzzleType == PuzzleType.DRAGDROP) {
+        Debug.Log("Puzzle Type: " + puzzleJSON.puzzleType);
+        Debug.Log("Puzzle Type #: " + (int)puzzleJSON.puzzleType);
+        if (puzzleJSON.puzzleType == PuzzleType.DRAGDROP) {
             SceneManager.LoadScene("LoadDragDropScene");
         }
         //Debug.Log("JSON Data: " + puzzleJSON.GetJSON());

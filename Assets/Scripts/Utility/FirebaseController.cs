@@ -92,6 +92,9 @@ public class FirebaseController : MonoBehaviour {
                 //}
                 //Debug.Log("JSON Data: " + puzzleJSON.GetJSON());
                 PuzzleLoadData loader = GameObject.Find("LoadData").GetComponent<PuzzleLoadData>();
+                if(loader == null) {
+                    Debug.Log("Error: PuzzleLoadData not found!");
+                }
                 loader.LoadData(data);
             }
             FinishLoading();

@@ -271,6 +271,11 @@ PrefabInstance:
       propertyPath: isDebug
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4504196373450119325, guid: 0d703a10d6c827d4c8ed552e78539972,
+        type: 3}
+      propertyPath: isLoader
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4504196373450119326, guid: 0d703a10d6c827d4c8ed552e78539972,
         type: 3}
       propertyPath: m_Size.x

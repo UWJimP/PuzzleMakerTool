@@ -34,7 +34,7 @@ public class AngularReceiver : MonoBehaviour {
     }
 
     public void LoadScene(string scene) {
-        //Debug.Log("Scene loading: " + scene);
+        Debug.Log("Scene loading: " + scene);
         SceneManager.LoadScene(scene);
     }
 }

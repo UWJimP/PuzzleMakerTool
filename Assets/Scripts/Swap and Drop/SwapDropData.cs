@@ -124,7 +124,8 @@ public class SwapDropData : MonoBehaviour {
             width = puzzle_width,
             isRotateRandom = randomRotation,
             orientation = imageOrientation,
-            textureJSON = textureData
+            textureJSON = textureData,
+            puzzleType = PuzzleType.DRAGDROP
         };
 
         return json;

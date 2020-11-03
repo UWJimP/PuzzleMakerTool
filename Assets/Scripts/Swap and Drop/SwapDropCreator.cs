@@ -69,6 +69,7 @@ public class SwapDropCreator : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start() {
+        Debug.Log("SwapDropCreator Starting...");
         if(isDebug) {
             string test = "https://vignette.wikia.nocookie.net/among-us-wiki/images/a/ab/Cyan.png/revision/latest/scale-to-width-down/340?cb=20200927084517";
             //string test = "https://i.pinimg.com/236x/7b/4d/2c/7b4d2c600f17fb2cff1fd7418306c5bc--fantasy-armor-dark-fantasy.jpg";
@@ -78,11 +79,14 @@ public class SwapDropCreator : MonoBehaviour {
             ChangeMenu((int)PuzzleType.DRAGDROP);
         } else {
             if(isLoader) {
+                Debug.Log("SwapDropCreator: Loader performing");
+                InitializeLoadData();
+                ChangeMenu((int)PuzzleType.NONE);
+            } else {
+                Debug.Log("SwapDropCreator: Creator Performing");
                 InitializeCreator3();
                 FinishLoading();
                 ChangeMenu((int)PuzzleType.DRAGDROP);
-            } else {
-                InitializeLoadData();
             }
         }
     }
