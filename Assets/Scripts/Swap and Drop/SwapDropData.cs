@@ -37,7 +37,7 @@ public class SwapDropData : MonoBehaviour {
             Destroy(gameObject);
         }
         if(firebase == null) {
-            firebase = null;
+            firebase = new FirebaseController();
         }
         puzzle_width = 3;
         puzzle_height = 3;
